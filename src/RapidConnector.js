@@ -32,20 +32,18 @@ var GameSession = {
 
 }
 */
+import $ from 'jquery';
+import rapid from 'rapid-io'
 
+// export default function rapid(){
 var GameSession;
-var L1Words = ["are", "ate", "rat", "tar", "pin", "tap", "ski", "sky"];
-var L2Words = ["tree", "neat", "tear", "pear", "trap", "prem", "barn", "scar"];
-var L3Words = ["burnt", "meant", "paint", "braid", "learn", "rapid", "drear", "point"];
-var L4Words = ["parent", "number", "corner", "reader", "seeder", "teeter", "andrew", "harjit", "joseph"];
-var L5Words = ["Bhavesh", "letters", "slaters", "columns", "monster", "pranker"];
 
 var API_KEY = "NDA1OWE0MWo1b3AzYm41LnJhcGlkLmlv";
 var gameId = 1;
 var clientPlayer = "Harjit";
 var currentLev = 1;
 var currentWordSet;
-const rapidClient = Rapid.createClient(API_KEY);
+const rapidClient = rapid.createClient(API_KEY);
 var gameSubscription;
 var wordSubscription;
 
@@ -75,12 +73,12 @@ Collections to suscribe to: Game, Words
 **/
 
 //Returns the array of player objects and everything in them
-function GetPlayers()
+export function GetPlayers()
 {
 	return GameSession.players;
 }
 
-function SetPlayerName(name)
+export function SetPlayerName(name)
 {
 	clientPlayer = name;
 	return clientPlayer;
@@ -88,12 +86,12 @@ function SetPlayerName(name)
 
 //returns game session object. in case you need something. let me know if you need something that I am not offering
 //we will eventually want to stray away from allowing access to the entire game...
-function GetGameSession()
+export function GetGameSession()
 {
 	return GameSession;
 }
 
-function GetPlayer(player)
+export function GetPlayer(player)
 {
 
 	if(player.points != null)
@@ -106,13 +104,13 @@ function GetPlayer(player)
 }
 
 //get scores for a specific player by name
-function GetPoints(player)
+export function GetPoints(player)
 {
 	var p = GetPlayer(player);
 	return p.points;
 }
 
-function AddPoints(player, points)
+export function AddPoints(player, points)
 {
 	var p = GetPlayer(player);
 	var name = p.name;
@@ -130,7 +128,7 @@ function AddPoints(player, points)
 	}
 }
 
-function SubtractPoints(player, points)
+export function SubtractPoints(player, points)
 {
 	var p = GetPlayer(player);
 	var name = p.name;
@@ -147,7 +145,7 @@ function SubtractPoints(player, points)
   		});
 }
 
-function LevelUp(player)
+export function LevelUp(player)
 {
 	var p = GetPlayer(player);
 	var name = p.name;
@@ -168,12 +166,12 @@ function LevelUp(player)
 
 }
 
-function LevelDown(player)
+export function LevelDown(player)
 {
 	var p = GetPlayer(player);
 	var name = p.name;
-	if(currentLev < 5){
-		currentLev += 1;
+	if(currentLev <= 5){
+		currentLev -= 1;
 
 		rapidClient.collection('Game')
   		.document('Test')
@@ -189,22 +187,22 @@ function LevelDown(player)
 
 }
 
-function setGameSession(session){
+export function setGameSession(session){
 	GameSession = session;
 	currentLev = GetPlayer(clientPlayer).level;
 	UpdateWordFilterSubscription();
 }
 
-function setWordSet(words){
+export function setWordSet(words){
 	currentWordSet = [];
-	for(index in words)
+	for(var index=0; index<words.length; index++)
 	{
 		var wordDoc = words[index];
 		currentWordSet.push(wordDoc.body.word);
 	}
 }
 
-function UpdateWordFilterSubscription()
+export function UpdateWordFilterSubscription()
 {
 	if(wordSubscription != null){
 		wordSubscription.unsubscribe();
@@ -216,7 +214,7 @@ function UpdateWordFilterSubscription()
 			setWordSet(words)
 		});
 }
-function UpdateGameOnSubscription()
+export function UpdateGameOnSubscription()
 {
 
 	if(gameSubscription != null){
@@ -231,8 +229,7 @@ function UpdateGameOnSubscription()
 
 
 }
-
-function GetWords()
+export function GetWords()
 {
 	return currentWordSet;
 }
@@ -241,3 +238,4 @@ $(function(){
 
 	UpdateGameOnSubscription();
 });
+// }
