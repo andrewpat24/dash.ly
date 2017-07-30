@@ -16,18 +16,18 @@ var wordSubscription;
 Collections to suscribe to: Game, Words
 **/
 
-export function init(playerName, sessionName, callback){
+export function init(playerName, sessionName, onGameReady, onGameUpdated){
 
 	try{
 		SetClientPlayer(playerName);
-		JoinSession(sessionName);
+		JoinSession(sessionName, onGameUpdated);
 
 	} catch(e){
-		callback(e.message);
+		onGameReady(e.message);
 		return;
 	}
 	//callback('Session is full');
-	callback(null);
+	onGameReady(null);
 }
 
 export function AddToPlayers(sessionName, player_name)
@@ -37,7 +37,6 @@ export function AddToPlayers(sessionName, player_name)
   			.execute(doc => {
 				var currentPlayers = doc.body.players;
 				var passed = true;
-				debugger;
 				for(var i = 0; i < currentPlayers.length; i++)
 				{
 						if(currentPlayers[i].name === player_name)
@@ -50,7 +49,6 @@ export function AddToPlayers(sessionName, player_name)
 						}
 				}
 				if(passed){
-					debugger;
 					  doc.body.players.push({"name": player_name, "level":1, "points":0, "ready":false});
 				}
   				return doc.body;
@@ -59,7 +57,7 @@ export function AddToPlayers(sessionName, player_name)
   			});
 }
 
-export function JoinSession(sessionName){
+export function JoinSession(sessionName, onGameUpdated){
 
 		// Call a fetch() to see if session exists or not
 	rapidClient.collection("Game")
@@ -79,12 +77,12 @@ export function JoinSession(sessionName){
 			})
 			.then(
 				function(){
-					SetSubscription(sessionName);
+					SetSubscription(sessionName, onGameUpdated);
 				}
 			);
 
 		} else if(session.body.players.length <= MAX_PLAYERS){
-			SetSubscription(sessionName);
+			SetSubscription(sessionName, onGameUpdated);
 		}else{
 			// return an error and/or window.alert();
 			window.alert("Session already full");
@@ -184,7 +182,6 @@ export function LevelUp(player)
 		rapidClient.collection('Game')
   		.document('Testing')
   			.execute(doc => {
-				  debugger;
   				doc.body.players[index].level += 1;
   				currentLev = doc.body.players[index].level;
   				return doc.body;
@@ -193,8 +190,6 @@ export function LevelUp(player)
   				return GetPlayer(name).player;
   			});
 	}
-	debugger;
-
 
 }
 
@@ -260,6 +255,20 @@ export function SetClientPlayer(name)
  	//UpdateWordFilterSubscription();
 }
 
+export function SendWin(sessionName, playerName)
+{
+	rapidClient.collection('Game')
+  		.document(sessionName)
+  			.execute(doc => {
+				doc.body.winner = playerName;
+				doc.completed = true;
+				return doc.body;
+  			},success => {
+  				return GetPlayer(clientPlayer).player;
+			  });
+
+}
+
 export function AddPlayerToGame(sessionName, clientPlayer)
 {
 	//var index = GetPlayer(clientPlayer).id;
@@ -272,7 +281,6 @@ export function AddPlayerToGame(sessionName, clientPlayer)
 				{
 					if(currentPlayers[i].name === clientPlayer)
 					{
-						debugger;
 						passed = false;
 						currentPlayers[i].level = 1;
 						currentPlayers[i].points = 0;
@@ -282,7 +290,6 @@ export function AddPlayerToGame(sessionName, clientPlayer)
 					}
 				}
 				if(passed){
-					debugger;
 					  doc.body.players.push({"name": clientPlayer, "level":1, "points":0, "ready":false});
 				}
 				return doc.body;
@@ -293,7 +300,7 @@ export function AddPlayerToGame(sessionName, clientPlayer)
 
 }
 // Set and Update
-export function SetSubscription(sessionName)
+export function SetSubscription(sessionName, onGameUpdated)
 {
 
 	var addPlayerCheck = gameSubscription == null;
@@ -305,6 +312,13 @@ export function SetSubscription(sessionName)
 		.document(sessionName)
 		.subscribe(game =>{
 			SetGameSession(game.body);
+			if(GetGameSession().completed)
+			{
+				gameSubscription.unsubscribe();
+				wordSubscription.unsubscribe();
+				window.alert("Winner: "+GetGameSession().winner);
+			}
+			onGameUpdated(GetGameSession());
 	});
 	if(addPlayerCheck)
 		AddPlayerToGame(sessionName, clientPlayer);

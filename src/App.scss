@@ -45,14 +45,50 @@ a{
 .main-background{
   background: white;
 }
-.progress-bar{
+.progress-bar1{
   height: 6.3rem;
-  margin-top: 90vh;
+  
   margin-left: -20px;
   width: 100%;
   vertical-align: middle;
 }
-.progress-fill {
+.progress-fill1 {
+  height: 100%;
+  text-align: left;
+}
+
+.progress-bar2{
+  height: 6.3rem;
+  
+  margin-left: -20px;
+  width: 100%;
+  vertical-align: middle;
+}
+.progress-fill2 {
+  height: 100%;
+  text-align: left;
+}
+
+.progress-bar3{
+  height: 6.3rem;
+  
+  margin-left: -20px;
+  width: 100%;
+  vertical-align: middle;
+}
+.progress-fill3 {
+  height: 100%;
+  text-align: left;
+}
+
+.progress-bar4{
+  height: 6.3rem;
+
+  margin-left: -20px;
+  width: 100%;
+  vertical-align: middle;
+}
+.progress-fill4 {
   height: 100%;
   text-align: left;
 }
@@ -133,6 +169,7 @@ p{
   text-align: center;
 }
 
+
 .button{
   background: white;
   border: 2px solid $color;
@@ -140,15 +177,17 @@ p{
   text-transform: uppercase;
   font-size: 2rem;
   padding: 40px 80px;
-  display: block;
   transform: skew(-23deg);
-  margin: 70px auto;
   transition: all 400ms ease-in-out;
 
   &:hover{
     border: 2px solid $red;
   }
 
+}
+
+.all-buttons{
+  margin-top: 100px;
 }
 
 .secret-input{

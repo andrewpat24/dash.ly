@@ -16,6 +16,7 @@ class App extends Component {
       playerName: "John",
       sessionName: "Testing",
       gameStarted: false,
+      gameCompleted: false,
       activeWord: [],
       activeLetters: [],
       wordsMastered: 0,
@@ -25,7 +26,8 @@ class App extends Component {
       currentLevel: 1,
       points: 0,
       percentComplete: 0,
-      api: rapid
+      maxPoints: 1000,
+      playerObjs : [{"points": 0},{"points": 0},{"points": 0},{"points": 0}]
     }
     this.getWordList = this.getWordList.bind(this);
     this.getRandomInt = this.getRandomInt.bind(this);
@@ -41,10 +43,20 @@ class App extends Component {
     this.startGameAsBhavesh = this.startGameAsBhavesh.bind(this);
     this.GetPointAward = this.GetPointAward.bind(this);
     this.AwardPoints = this.AwardPoints.bind(this);
+    this.Update = this.Update.bind(this);
+    //this.ClientNameInputHandler = this.ClientNameInputHandler.bind(this);
+    //this.SessionNameInputHandler = this.SessionNameInputHandler.bind(this);
     this.interval;
   }
   static propTypes = {
     percentComplete: PropTypes.number
+  }
+
+  ClientNameInputHandler(e)
+  {
+    this.setState({
+      playerName : e.target.value
+    })
   }
 
   AwardPoints(playerName, points){
@@ -53,6 +65,14 @@ class App extends Component {
     this.setState({
       points: value
     })
+
+    if(value > this.state.maxPoints)
+    {
+      rapid.SendWin(this.state.sessionName, playerName);
+      this.setState({
+        gameCompleted: true
+      });
+    }
   }
 
   componentWillMount(){
@@ -161,22 +181,42 @@ class App extends Component {
         player = this.state.playerName;
       }
 
-    rapid.init(player, this.state.sessionName, function(){
-      console.log("Game ready");
-      rapid.UpdateWordFilterSubscription(function(){
-        var word = self.getWord();
-        self.setState({
-          activeWord: word,
-          gameStarted: true,
-          wordsMastered: 0,
-          timer: 60
+    rapid.init(
+      player, 
+      this.state.sessionName, 
+      function(){
+        console.log("Game ready");
+        rapid.UpdateWordFilterSubscription(function(){
+          var word = self.getWord();
+          self.setState({
+            activeWord: word,
+            gameStarted: true,
+            wordsMastered: 0,
+            timer: 60
+          });
         });
-      });
+      },function(gameSession){
+        self.Update(gameSession);
+        
+      }
+  );
 
-      // ReactDOM.findDOMNode(this).querySelector('.secret-input').focus();
+}
 
-    });
+Update(gameSession)
+{
 
+
+  var playerArr = gameSession.players;
+  this.setState({playerObjs: playerArr});
+  debugger;
+  //check win
+  if(gameSession.completed)
+  {
+    this.setState({
+      gameCompleted: true
+    })
+  }
 }
 
   getWord(){
@@ -290,28 +330,41 @@ class App extends Component {
       board=(
          <div className="game__board" key="start">
           <h1 className="main-header animated fadeInLeft" >{'DASH.LY'}</h1>
-          <button className="button" onClick={this.startGameAsHarjit}>Harjit</button>
+          <div className="all-buttons">
+             <button className="button" onClick={this.startGameAsHarjit}>Harjit</button>
             <button className="button" onClick={this.startGameAsJoe}>Joe</button>
             <button className="button" onClick={this.startGameAsBhavesh}>Bhavesh</button>
             <button className="button" onClick={this.startGameAsAndrew}>Andrew</button>
-
+            </div>
          </div>);
     }
-    else if(this.state.timer && this.state.gameStarted){
+    else if(!this.state.gameCompleted && this.state.gameStarted){
        board=(
          <div className="row">
            <div className="col s4">
              <div className="game__board" key="inprogress">
-               <div className="game__score"><h2>{'SCORE'}</h2><h1>{this.state.wordsMastered}</h1></div>
+               <div className="game__score"><h2>{'SCORE'}</h2><h1>{this.state.points}</h1></div>
                <ReactCSSTransitionGroup transitionName='fade' transitionEnterTimeout={500} transitionLeaveTimeout={500}>
                <div className="game__words" key={this.state.activeWord}>{letters}</div>
                </ReactCSSTransitionGroup>
-               <div className="game__timer">{'TIME LEFT: ' + this.state.timer}</div>
+               {/* <div className="game__timer">{'TIME LEFT: ' + this.state.timer}</div> */}
              </div>
            </div>
            <div className="col s8">
-             <div className="progress-bar">
-               <div className="progress-fill" style={{width: (0 + this.state.wordsMastered)*10 + '%', backgroundColor: '#35e5Fd', transition:'width 2s'}}>
+             <div className="progress-bar1">
+               <div className="progress-fill1" style={{width: (0 + this.state.playerObjs[0].points)/10 + '%', backgroundColor: '#35e5Fd', transition:'width 2s'}}>
+            </div>
+           </div>
+           <div className="progress-bar2">
+               <div className="progress-fill2" style={{width: (0 + this.state.playerObjs[1].points)/10 + '%', backgroundColor: '#fd6fec', transition:'width 2s'}}>
+            </div>
+           </div>
+           <div className="progress-bar3">
+               <div className="progress-fill3" style={{width: (0 + this.state.playerObjs[2].points)/10 + '%', backgroundColor: 'red', transition:'width 2s'}}>
+            </div>
+           </div>
+           <div className="progress-bar4">
+               <div className="progress-fill4" style={{width: (0 + this.state.playerObjs[3].points)/10 + '%', backgroundColor: '#fff83b', transition:'width 2s'}}>
             </div>
            </div>
          </div>
@@ -322,9 +375,9 @@ class App extends Component {
       board=(
         <div className="game__board" key="timesup">
           <div className="game__words">
-            <p>{'TIME IS UP!'}</p>
-            <p>{'FINAL SCORE: ' + this.state.points}<span className="emoji">{this.rating()}</span></p>
-            <button className="button" onClick={this.startGame}>{'Play Again'}</button>
+            <p>{''}</p>
+            <h1>{'FINAL SCORE: ' + this.state.points}</h1>
+            <button className="button" onClick={window.location.refresh}>{'Play Again'}</button>
           </div>
         </div>
       )
