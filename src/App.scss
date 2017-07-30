@@ -46,8 +46,8 @@ a{
   background: white;
 }
 .progress-bar1{
-  height: 6.3rem;
-  
+  height: 25vh;
+
   margin-left: -20px;
   width: 100%;
   vertical-align: middle;
@@ -58,8 +58,8 @@ a{
 }
 
 .progress-bar2{
-  height: 6.3rem;
-  
+  height: 25vh;
+
   margin-left: -20px;
   width: 100%;
   vertical-align: middle;
@@ -70,8 +70,8 @@ a{
 }
 
 .progress-bar3{
-  height: 6.3rem;
-  
+  height: 25vh;
+
   margin-left: -20px;
   width: 100%;
   vertical-align: middle;
@@ -82,7 +82,7 @@ a{
 }
 
 .progress-bar4{
-  height: 6.3rem;
+  height: 25vh;
 
   margin-left: -20px;
   width: 100%;
@@ -184,6 +184,31 @@ p{
     border: 2px solid $red;
   }
 
+}
+
+button:focus {
+  background-color: white;
+  color: #59646c;
+}
+
+
+
+.andrew:focus {
+  background-color:#fff83b ;
+  color: white;
+}
+.bhavesh:focus{
+  background-color: #32fec0;
+  color: white;
+}
+.joe:focus{
+  background-color: #fd6fec;
+  color: white;
+}
+
+.harjit:focus {
+  background-color: #35e5Fd;
+  color:white;
 }
 
 .all-buttons{

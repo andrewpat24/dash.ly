@@ -331,10 +331,10 @@ Update(gameSession)
          <div className="game__board" key="start">
           <h1 className="main-header animated fadeInLeft" >{'DASH.LY'}</h1>
           <div className="all-buttons">
-             <button className="button" onClick={this.startGameAsHarjit}>Harjit</button>
-            <button className="button" onClick={this.startGameAsJoe}>Joe</button>
-            <button className="button" onClick={this.startGameAsBhavesh}>Bhavesh</button>
-            <button className="button" onClick={this.startGameAsAndrew}>Andrew</button>
+             <button className="button harjit" onClick={this.startGameAsHarjit}>Harjit</button>
+            <button className="button joe" onClick={this.startGameAsJoe}>Joe</button>
+            <button className="button bhavesh" onClick={this.startGameAsBhavesh}>Bhavesh</button>
+            <button className="button andrew" onClick={this.startGameAsAndrew}>Andrew</button>
             </div>
          </div>);
     }
@@ -360,7 +360,7 @@ Update(gameSession)
             </div>
            </div>
            <div className="progress-bar3">
-               <div className="progress-fill3" style={{width: (0 + this.state.playerObjs[2].points)/10 + '%', backgroundColor: 'red', transition:'width 2s'}}>
+               <div className="progress-fill3" style={{width: (0 + this.state.playerObjs[2].points)/10 + '%', backgroundColor: '#32fec0', transition:'width 2s'}}>
             </div>
            </div>
            <div className="progress-bar4">

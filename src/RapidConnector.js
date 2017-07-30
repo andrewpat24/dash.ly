@@ -77,6 +77,7 @@ export function JoinSession(sessionName, onGameUpdated){
 			})
 			.then(
 				function(){
+
 					SetSubscription(sessionName, onGameUpdated);
 				}
 			);
@@ -261,7 +262,7 @@ export function SendWin(sessionName, playerName)
   		.document(sessionName)
   			.execute(doc => {
 				doc.body.winner = playerName;
-				doc.completed = true;
+				doc.body.completed = true;
 				return doc.body;
   			},success => {
   				return GetPlayer(clientPlayer).player;

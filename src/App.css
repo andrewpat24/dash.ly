@@ -34,7 +34,7 @@ a {
   background: white; }
 
 .progress-bar1 {
-  height: 6.3rem;
+  height: 25vh;
   margin-left: -20px;
   width: 100%;
   vertical-align: middle; }
@@ -44,7 +44,7 @@ a {
   text-align: left; }
 
 .progress-bar2 {
-  height: 6.3rem;
+  height: 25vh;
   margin-left: -20px;
   width: 100%;
   vertical-align: middle; }
@@ -54,7 +54,7 @@ a {
   text-align: left; }
 
 .progress-bar3 {
-  height: 6.3rem;
+  height: 25vh;
   margin-left: -20px;
   width: 100%;
   vertical-align: middle; }
@@ -64,7 +64,7 @@ a {
   text-align: left; }
 
 .progress-bar4 {
-  height: 6.3rem;
+  height: 25vh;
   margin-left: -20px;
   width: 100%;
   vertical-align: middle; }
@@ -141,6 +141,26 @@ p {
   transition: all 400ms ease-in-out; }
   .button:hover {
     border: 2px solid #DA3F62; }
+
+button:focus {
+  background-color: white;
+  color: #59646c; }
+
+.andrew:focus {
+  background-color: #fff83b;
+  color: white; }
+
+.bhavesh:focus {
+  background-color: #32fec0;
+  color: white; }
+
+.joe:focus {
+  background-color: #fd6fec;
+  color: white; }
+
+.harjit:focus {
+  background-color: #35e5Fd;
+  color: white; }
 
 .all-buttons {
   margin-top: 100px; }
