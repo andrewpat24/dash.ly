@@ -29,6 +29,35 @@ export function init(playerName, sessionName, callback){
 	callback(null);
 }
 
+export function AddToPlayers(sessionName, player_name)
+{
+	rapidClient.collection('Game')
+  		.document(sessionName)
+  			.execute(doc => {
+				var currentPlayers = doc.body.players;
+				var passed = true;
+				debugger;
+				for(var i = 0; i < currentPlayers.length; i++)
+				{
+						if(currentPlayers[i].name === player_name)
+						{
+							passed = false;
+							currentPlayers[i].level = 1;
+							currentPlayers[i].points = 0;
+							currentPlayers[i].ready = false;
+							break;
+						}
+				}
+				if(passed){
+					debugger;
+					  doc.body.players.push({"name": player_name, "level":1, "points":0, "ready":false});
+				}
+  				return doc.body;
+  			},success => {
+  				return GetPlayer(player_name).player;
+  			});
+}
+
 export function JoinSession(sessionName){
 	
 	// Call a fetch() to see if session exists or not
@@ -140,47 +169,52 @@ export function SubtractPoints(player, points)
   			}
   			return doc.body;
   		},success => {
-  			return GetPlayer(name).player;
+  			return GetPlayer(name);
   		});
 }
 
 export function LevelUp(player)
 {
-	var p = GetPlayer(player).player;
-	var name = p.name;
+	var p = GetPlayer(player);
+	var index = p.id;
+	var name = p.player.name;
+	currentLev = p.player.level;
 	if(currentLev < 5){
 		currentLev += 1;
 
 		rapidClient.collection('Game')
-  		.document('Test')
+  		.document('Testing')
   			.execute(doc => {
-  				doc.body.players[name].level += 1;
-  				currentLev = doc.body.players[name].level;
+				  debugger;
+  				doc.body.players[index].level += 1;
+  				currentLev = doc.body.players[index].level;
   				return doc.body;
   			},success => {
   				UpdateWordFilterSubscription();
   				return GetPlayer(name).player;
   			});
 	}
+	debugger;
+	
 
 }
 
 export function LevelDown(player)
 {
-	var p = GetPlayer(player).player;
-	var name = p.name;
+	var p = GetPlayer(player);
+	var index = p.id;
 	if(currentLev > 1){
 		currentLev -= 1;
 
 		rapidClient.collection('Game')
   		.document('Test')
   			.execute(doc => {
-  				doc.body.players[name].level -= 1;
-  				currentLev = doc.body.players[name].level;
+  				doc.body.players[index].level -= 1;
+  				currentLev = doc.body.players[index].level;
   				return doc.body;
   			},success => {
   				UpdateWordFilterSubscription();
-  				return GetPlayer(name).player;
+  				return p.name;
   			});
 	}
 
@@ -195,7 +229,7 @@ export function SetGameSession(session){
 	// if(currentLev > 1){
 	// 	currentLev = 1;
 	// }
-	UpdateWordFilterSubscription();
+	//UpdateWordFilterSubscription();
 }
 
 export function setWordSet(words){
@@ -205,7 +239,6 @@ export function setWordSet(words){
 		var word = words[index];
 		currentWordSet.push(word);
 	}
-	debugger;
 }
 
 export function UpdateWordFilterSubscription(callback)
@@ -228,26 +261,34 @@ export function SetClientPlayer(name)
  	//UpdateWordFilterSubscription();
 }
 
-export function AddPlayerToGame(sessionName)
+export function AddPlayerToGame(sessionName, clientPlayer)
 {
 	//var index = GetPlayer(clientPlayer).id;
 	rapidClient.collection('Game')
   		.document(sessionName)
   			.execute(doc => {
-				if(doc.body.players.length < 4){
-					  doc.body.players.push({name: clientPlayer, level: 1, points: 0, ready: false});
-					  					  
-					  if(doc.body.players.length == 4)
-						{
-							doc.body.started = true;
-						}
-					  return doc.body;
-				}else{
-					window.alert("Game is Full");
-					return doc.body;
+				var currentPlayers = doc.body.players;
+				var passed = true;
+				for(var i = 0; i < currentPlayers.length; i++)
+				{
+					if(currentPlayers[i].name === clientPlayer)
+					{
+						debugger;
+						passed = false;
+						currentPlayers[i].level = 1;
+						currentPlayers[i].points = 0;
+						currentPlayers[i].ready = false;
+						doc.body.players = currentPlayers;
+						break;
+					}
 				}
+				if(passed){
+					debugger;
+					  doc.body.players.push({"name": clientPlayer, "level":1, "points":0, "ready":false});
+				}
+				return doc.body;
+
   			},success => {
-  				UpdateWordFilterSubscription();
   				return GetPlayer(clientPlayer).player;
 			  });
 
@@ -256,7 +297,8 @@ export function AddPlayerToGame(sessionName)
 export function SetSubscription(sessionName)
 {
 	
-			
+	var addPlayerCheck = gameSubscription == null;	
+
 	if(gameSubscription != null){
 		gameSubscription.unsubscribe();
 	}
@@ -265,11 +307,12 @@ export function SetSubscription(sessionName)
 		.subscribe(game =>{
 			SetGameSession(game.body);
 	});
+	if(addPlayerCheck)
+		AddPlayerToGame(sessionName, clientPlayer);
 }
 
 export function GetWords()
 {
-	debugger;
 	return currentWordSet;
 }
 
