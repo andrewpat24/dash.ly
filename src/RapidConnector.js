@@ -40,6 +40,7 @@ export function JoinSession(sessionName){
 			);
 
 		} else if(session.body.players.length <= MAX_PLAYERS){
+			debugger;
 			SetSubscription(sessionName);
 		}else{
 			// return an error and/or window.alert();
@@ -65,7 +66,6 @@ export function SetPlayerName(name)
 //we will eventually want to stray away from allowing access to the entire game...
 export function GetGameSession()
 {
-	debugger;
 	return GameSession;
 }
 
@@ -176,12 +176,11 @@ export function SetGameSession(session){
 	// If max players, throw error to user
 	
 	GameSession = session;
-	currentLev = GetPlayer(clientPlayer).level;
+	currentLev = GetPlayer(clientPlayer).player.level;
 	// if(currentLev > 1){
 	// 	currentLev = 1;
 	// }
 	UpdateWordFilterSubscription();
-	debugger;
 }
 
 export function setWordSet(words){
@@ -198,7 +197,6 @@ export function UpdateWordFilterSubscription()
 	if(wordSubscription != null){
 		wordSubscription.unsubscribe();
 	}
-
 	wordSubscription = rapidClient.collection("List3")
 		.document("level"+currentLev)
 		.subscribe(words => {
@@ -220,7 +218,6 @@ export function SetSubscription(sessionName)
 	gameSubscription = rapidClient.collection("Game")
 		.document(sessionName)
 		.subscribe(game =>{
-			debugger;
 			SetGameSession(game.body);
 	});
 }
