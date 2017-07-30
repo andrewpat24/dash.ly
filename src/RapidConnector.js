@@ -15,7 +15,7 @@ var wordSubscription;
 /**
 Collections to suscribe to: Game, Words
 **/
-export function JoinSession(sessionName){
+export function JoinSession(sessionName, callback){
 	
 	// Call a fetch() to see if session exists or not
 	rapidClient.collection("Game")
@@ -45,10 +45,12 @@ export function JoinSession(sessionName){
 		}else{
 			// return an error and/or window.alert();
 			window.alert("Session already full");
+			callback('Session is full');
 			return;
 		}
 
 	});
+	callback(null);
 }
 //Returns the array of player objects and everything in them
 export function GetPlayers()
