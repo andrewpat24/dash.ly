@@ -1,43 +1,9 @@
-/*
-var GameSession = {
-	"players" : [
-		"Joe" : {
-			"name": "Joe",
-			"ready": false,
-			"level": 1,
-			"points": 0
-		},
-		"Harjit" : {
-			"name": "Harjit"
-			"ready": false,
-			"level": 1,
-			"points": 0
-		},
-		"Bhavesh" : {
-			"name": "Bhavesh",
-			"ready": false,
-			"level": 1,
-			"points": 0
-		},
-		"Andrew" : {
-			"name": "Andrew",
-			"ready": false,
-			"level": 1,
-			"points": 0
-		}
-	],
-	"started": false,
-	"completed": false,
-	"startCounter" : 5
-
-}
-*/
 import $ from 'jquery';
 import rapid from 'rapid-io'
 
 // export default function rapid(){
 var GameSession;
-
+const MAX_PLAYERS = 4;
 var API_KEY = "NDA1OWE0MWo1b3AzYm41LnJhcGlkLmlv";
 var gameId = 1;
 var clientPlayer = "Harjit";
@@ -48,30 +14,37 @@ var gameSubscription;
 var wordSubscription;
 
 /**
-Create Game Session
-
-GetPlayers()
-
-GetScore(player)
-
-GetWords(level)
-
-ChangeLevel(player, level)
-
-LevelUp(player)
-
-LevelDown(player)
-
-ChangePoints(player, points)
-
-AddPoints(player, points)
-
-SubtractPoints(player, points)
-
-
 Collections to suscribe to: Game, Words
 **/
-
+export function JoinSession(sessionName){
+	
+	// Call a fetch() to see if session exists or not
+	rapidClient.collection("Game")
+		.document(sessionName)
+		.fetch(session => {
+			
+			// create session 
+			if(session === null){
+				
+				rapidClient.collection("Game")
+				.document(sessionName)
+				.mutate({
+					"players": { clientPlayer: {"name":clientPlayer, "level":1, "points": 0, "ready": false}},
+					"started": false,
+					"completed": false,
+					"startCounter": 5
+				});
+			} 
+			
+			if(session.body.players.length <= MAX_PLAYERS){
+				SetSubscription(sessionName);
+			}else{
+				// return an error and/or window.alert();
+				window.alert("Session already full");
+			}
+			
+		});
+}
 //Returns the array of player objects and everything in them
 export function GetPlayers()
 {
@@ -187,7 +160,10 @@ export function LevelDown(player)
 
 }
 
-export function setGameSession(session){
+export function SetGameSession(session){
+	// TODO: Check if max players already joined
+	// If max players, throw error to user
+	
 	GameSession = session;
 	currentLev = GetPlayer(clientPlayer).level;
 	UpdateWordFilterSubscription();
@@ -214,20 +190,19 @@ export function UpdateWordFilterSubscription()
 			setWordSet(words)
 		});
 }
-export function UpdateGameOnSubscription()
-{
 
+// Set and Update
+export function SetSubscription(sessionName)
+{
 	if(gameSubscription != null){
 		gameSubscription.unsubscribe();
 	}
-
+	debugger;
 	gameSubscription = rapidClient.collection("Game")
-		.document("Test")
 		.subscribe(game =>{
-			setGameSession(game.body);
-		});
-
-
+			debugger;
+			SetGameSession(game.body);
+	});
 }
 export function GetWords()
 {
@@ -235,7 +210,9 @@ export function GetWords()
 }
 
 $(function(){
-
-	UpdateGameOnSubscription();
+	debugger;
+	window.JoinSession = JoinSession;
+	//init();
+	//SetSubscription();
 });
 // }

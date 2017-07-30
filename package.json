@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "babel": "^6.23.0",
+    "jquery": "^3.2.1",
     "node-sass-chokidar": "0.0.3",
     "rapid-io": "^0.4.2",
     "react": "^15.6.1",
