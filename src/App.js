@@ -13,6 +13,8 @@ class App extends Component {
     super(props);
     this.state = {
       gameId: 1,
+      playerName: "John",
+      sessionName: "friends",
       gameStarted: false,
       activeWord: [],
       activeLetters: [],
@@ -21,7 +23,8 @@ class App extends Component {
       wordList: [],
       font: 'sans',
       currentLevel: 1,
-      percentComplete: 0
+      percentComplete: 0,
+      api: rapid
 
     }
     this.getWordList = this.getWordList.bind(this);
@@ -32,17 +35,19 @@ class App extends Component {
     this.startGame = this.startGame.bind(this);
     this.rating = this.rating.bind(this);
     this.switchFonts = this.switchFonts.bind(this);
+    this.startGameAsHarjit = this.startGameAsHarjit.bind(this);
+    this.startGameAsJoe = this.startGameAsJoe.bind(this);
+    this.startGameAsAndrew = this.startGameAsAndrew.bind(this);
+    this.startGameAsBhavesh = this.startGameAsBhavesh.bind(this);
+
     this.interval;
   }
   static propTypes = {
     percentComplete: PropTypes.number
   }
 
-
-
-
   componentWillMount(){
-
+    var self = this;
     document.addEventListener('keydown', function(e) {
       e.preventDefault();
 
@@ -64,12 +69,13 @@ class App extends Component {
           activeLetters: [],
           wordsMastered: this.state.wordsMastered + 1,
         });
-        if(this.state.wordsMastered % 5 == 0 && this.state.wordsMastered !== 0){
-          rapid.LevelUp("Harjit");
-          console.log(rapid.GetPlayer("Harjit"));
-          this.setState({
-            wordList: this.getWordList()
-          });
+          if(this.state.wordsMastered % 5 == 0 && this.state.wordsMastered !== 0){
+            self.levelUp(this.state.playerName);
+            console.log(this.state.playerName);
+            this.setState({
+              wordList: this.getWordList(),
+              wordsMastered: 0
+            });
         }
       }
       else{
@@ -79,6 +85,11 @@ class App extends Component {
       }
 
     }.bind(this));
+  }
+
+  levelUp(player)
+  {
+    rapid.LevelUp(player);
   }
 
   checkEqual(arr1, arr2) {
@@ -126,36 +137,47 @@ class App extends Component {
     }
   }
 
-  startGame(){
+  startGame(player){
+    //$('#GameId').val();
+    //$('#')
+    var self = this;
+    if(player === null)
+      {
+        player = "Harjit";
+      }
 
-      /*rapid.JoinSession("Joey", () => {
-        console.log("Successfully joined game");
-      });*/
-
-      this.setState({
-        wordList: this.getWordList()
-      }, function(){
-        let word = this.getWord()
-        this.setState({
-          activeWord: this.getWord(),
+    rapid.init(player, "Testing", function(){
+      console.log("Game ready");
+      rapid.UpdateWordFilterSubscription(function(){
+        var word = self.getWord();
+        self.setState({
+          activeWord: word,
           gameStarted: true,
           wordsMastered: 0,
           timer: 60
         });
       });
 
-      ReactDOM.findDOMNode(this).querySelector('.secret-input').focus();
+      // ReactDOM.findDOMNode(this).querySelector('.secret-input').focus();
 
-      this.interval = setInterval(this.timer, 1000);
-  }
+    });
+
+}
 
   getWord(){
-    let index = this.getRandomInt(0, this.getWordList().length);
-    let wordToUse = this.getWordList()[index];
-    let newWordsList = this.getWordList();
-    newWordsList.splice(index, 1);
+
+    /*
+    let index = this.getRandomInt(0, this.state.wordList.length);
+    let wordToUse = this.state.wordList[index];
+    let newWordsList = this.state.wordList;
+    */
+    var newWordList = this.getWordList()
+    var index = this.getRandomInt(0, newWordList.length)
+    var wordToUse = newWordList[index]
+    newWordList.splice(index, 1);
+
     this.setState({
-      wordList: newWordsList
+      wordList: newWordList
     })
 
     return wordToUse.split("");
@@ -177,15 +199,60 @@ class App extends Component {
 
   }
   getWordList(){
-    var list = ["Catt", "dogg", "tiger", "Lions", "poombah", "timone", "jumanji", "soccers", "specific", "chocolat"];
-;
-    var uppers = list.map(function(x) { return x.toUpperCase(); });
+
+    var list = rapid.GetWords();
+    var uppers = list.map(function(x) {return x.toUpperCase(); });
     console.log(uppers);
     return uppers;
 
 
   }
 
+  updatePlayerName(e){
+
+    this.setState({
+      playerName: e.target.value
+    });
+  }
+
+  updateSessionName(e){
+
+    this.setState({
+      sessionName: e.target.value
+    });
+  }
+
+  startGameAsHarjit()
+  {
+    this.startGame("Harjit");
+    this.setState({
+      playerName: "Harjit"
+    });
+  }
+
+  startGameAsBhavesh()
+  {
+    this.startGame("Bhavesh");
+    this.setState({
+      playerName: "Bhavesh"
+    });
+  }
+
+  startGameAsJoe()
+  {
+    this.startGame("Joe");
+    this.setState({
+      playerName: "Joe"
+    });
+  }
+
+  startGameAsAndrew()
+  {
+    this.startGame("Andrew");
+    this.setState({
+      playerName: "Andrew"
+    });
+  }
 
   render(){
 
@@ -208,12 +275,11 @@ class App extends Component {
       board=(
          <div className="game__board" key="start">
           <h1 className="main-header animated fadeInLeft" >{'DASH.LY'}</h1>
-          <div className="room-field-container">
-          
-          </div>
-          <div className="right">
-            <button className="button" onClick={this.startGame}>Start</button>
-          </div>
+          <button className="button" onClick={this.startGameAsHarjit}>Harjit</button>
+            <button className="button" onClick={this.startGameAsJoe}>Joe</button>
+            <button className="button" onClick={this.startGameAsBhavesh}>Bhavesh</button>
+            <button className="button" onClick={this.startGameAsAndrew}>Andrew</button>
+
          </div>);
     }
     else if(this.state.timer && this.state.gameStarted){
