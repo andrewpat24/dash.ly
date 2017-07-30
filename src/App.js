@@ -12,7 +12,7 @@ class App extends Component {
     this.state = {
       gameId: 1,
       playerName: "John",
-      sessionName: "friends",
+      sessionName: "Testing",
       gameStarted: false,
       activeWord: [],
       activeLetters: [],
@@ -21,7 +21,7 @@ class App extends Component {
       wordList: [],
       font: 'sans',
       currentLevel: 1,
-      api: rapid
+      points: 0
 
     }
     this.getWordList = this.getWordList.bind(this);
@@ -36,8 +36,17 @@ class App extends Component {
     this.startGameAsJoe = this.startGameAsJoe.bind(this);
     this.startGameAsAndrew = this.startGameAsAndrew.bind(this);
     this.startGameAsBhavesh = this.startGameAsBhavesh.bind(this);
-
+    this.GetPointAward = this.GetPointAward.bind(this);
+    this.AwardPoints = this.AwardPoints.bind(this);
     this.interval;
+  }
+
+  AwardPoints(playerName, points){
+    rapid.AddPoints(this.state.sessionName, playerName, points);
+    var value = this.state.points += points;
+    this.setState({
+      points: value
+    })
   }
 
   componentWillMount(){
@@ -58,6 +67,8 @@ class App extends Component {
       let newActiveLetters = this.state.activeLetters;
       newActiveLetters.push(char);
       if(this.checkEqual(newActiveLetters, this.state.activeWord) ){
+        var points = this.state.activeWord.length * 10;;
+        self.AwardPoints(this.state.playerName, points);
         this.setState({
           activeWord: this.getWord(),
           activeLetters: [],
@@ -102,6 +113,10 @@ class App extends Component {
     return Math.floor(Math.random() * (max - min)) + min;
   }
 
+  GetPointAward(word)
+  {
+    var points = word.length * 10;
+  }
 
   timer(){
     let newTime = this.state.timer - 1;
@@ -137,10 +152,10 @@ class App extends Component {
     var self = this;
     if(player === null)
       {
-        player = "Harjit";
+        player = this.state.playerName;
       }
 
-    rapid.init(player, "Testing", function(){
+    rapid.init(player, this.state.sessionName, function(){
       console.log("Game ready");
       rapid.UpdateWordFilterSubscription(function(){
         var word = self.getWord();
@@ -313,7 +328,7 @@ class App extends Component {
         <div className="game__board" key="timesup">
           <div className="game__words">
             <p>{'TIME IS UP!'}</p>
-            <p>{'FINAL SCORE: ' + this.state.wordsMastered}<span className="emoji">{this.rating()}</span></p>
+            <p>{'FINAL SCORE: ' + this.state.points}<span className="emoji">{this.rating()}</span></p>
             <button className="button" onClick={this.startGame}>{'Play Again'}</button>
           </div>
         </div>

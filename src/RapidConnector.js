@@ -138,22 +138,20 @@ export function GetPoints(player)
 	return p.points;
 }
 
-export function AddPoints(player, points)
+export function AddPoints(sessionName, player, points)
 {
-	var p = GetPlayer(player).player;
+	var p = GetPlayer(player);
+	var index = p.id;
 	var name = p.name;
-	if(currentLev < 5){
-		currentLev += 1;
 
 		rapidClient.collection('Game')
-  		.document('Test')
+  		.document(sessionName)
   			.execute(doc => {
-  				doc.body.players[name].points += points;
+  				doc.body.players[index].points += points;
   				return doc.body;
   			},success => {
   				return GetPlayer(name).player;
   			});
-	}
 }
 
 export function SubtractPoints(player, points)
