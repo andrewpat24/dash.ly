@@ -1,41 +1,6 @@
-/*
-var GameSession = {
-	"players" : [
-		"Joe" : {
-			"name": "Joe",
-			"ready": false,
-			"level": 1,
-			"points": 0
-		},
-		"Harjit" : {
-			"name": "Harjit"
-			"ready": false,
-			"level": 1,
-			"points": 0
-		},
-		"Bhavesh" : {
-			"name": "Bhavesh",
-			"ready": false,
-			"level": 1,
-			"points": 0
-		},
-		"Andrew" : {
-			"name": "Andrew",
-			"ready": false,
-			"level": 1,
-			"points": 0
-		}
-	],
-	"started": false,
-	"completed": false,
-	"startCounter" : 5
-
-}
-*/
 import $ from 'jquery';
-import rapid from 'rapid-io'
+import rapid from 'rapid-io';
 
-// export default function rapid(){
 var GameSession;
 
 var API_KEY = "NDA1OWE0MWo1b3AzYm41LnJhcGlkLmlv";
@@ -88,6 +53,8 @@ export function SetPlayerName(name)
 //we will eventually want to stray away from allowing access to the entire game...
 export function GetGameSession()
 {
+
+
 	return GameSession;
 }
 
@@ -170,7 +137,7 @@ export function LevelDown(player)
 {
 	var p = GetPlayer(player);
 	var name = p.name;
-	if(currentLev <= 5){
+	if(currentLev > 1){
 		currentLev -= 1;
 
 		rapidClient.collection('Game')
@@ -190,6 +157,9 @@ export function LevelDown(player)
 export function setGameSession(session){
 	GameSession = session;
 	currentLev = GetPlayer(clientPlayer).level;
+	// if(currentLev > 1){
+	// 	currentLev = 1;
+	// }
 	UpdateWordFilterSubscription();
 }
 
@@ -197,8 +167,8 @@ export function setWordSet(words){
 	currentWordSet = [];
 	for(var index=0; index<words.length; index++)
 	{
-		var wordDoc = words[index];
-		currentWordSet.push(wordDoc.body.word);
+		var word = words[index];
+		currentWordSet.push(word);
 	}
 }
 
@@ -208,12 +178,20 @@ export function UpdateWordFilterSubscription()
 		wordSubscription.unsubscribe();
 	}
 
-	wordSubscription = rapidClient.collection("List")
-		.filter({level: currentLev})
+	wordSubscription = rapidClient.collection("List3")
+		.document("level"+currentLev)
 		.subscribe(words => {
-			setWordSet(words)
+			setWordSet(words.body.words)
 		});
 }
+//
+// export function SetClientPlayer(name)
+// {
+// 	clientPlayer = name;
+// 	p = GetPlayer(clientPlayer);
+// 	UpdateWordFilterSubscription();
+// }
+
 export function UpdateGameOnSubscription()
 {
 
@@ -229,8 +207,10 @@ export function UpdateGameOnSubscription()
 
 
 }
+
 export function GetWords()
 {
+	
 	return currentWordSet;
 }
 
@@ -238,4 +218,3 @@ $(function(){
 
 	UpdateGameOnSubscription();
 });
-// }

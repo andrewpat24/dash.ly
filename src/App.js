@@ -57,7 +57,14 @@ class App extends Component {
           activeWord: this.getWord(),
           activeLetters: [],
           wordsMastered: this.state.wordsMastered + 1,
-        })
+        });
+        if(this.state.wordsMastered % 5 == 0 && this.state.wordsMastered !== 0){
+          rapid.LevelUp("Harjit");
+          console.log(rapid.GetPlayer("Harjit"));
+          this.setState({
+            wordList: this.getWordList()
+          });
+        }
       }
       else{
         this.setState({
@@ -137,9 +144,8 @@ class App extends Component {
     newWordsList.splice(index, 1);
     this.setState({
       wordList: newWordsList
-    });
-
-    return wordToUse.split('');
+    })
+    return wordToUse.split("");
   }
 
   switchFonts(){
@@ -160,7 +166,9 @@ class App extends Component {
   getWordList(){
     const list = rapid.GetWords();
     var uppers = list.map(function(x) { return x.toUpperCase(); });
+    console.log(uppers);
     return uppers;
+
 
   }
 
