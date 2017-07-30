@@ -1,7 +1,6 @@
 import $ from 'jquery';
-import rapid from 'rapid-io'
+import rapid from 'rapid-io';
 
-// export default function rapid(){
 var GameSession;
 const MAX_PLAYERS = 4;
 var API_KEY = "NDA1OWE0MWo1b3AzYm41LnJhcGlkLmlv";
@@ -20,30 +19,35 @@ export function JoinSession(sessionName){
 	
 	// Call a fetch() to see if session exists or not
 	rapidClient.collection("Game")
-		.document(sessionName)
-		.fetch(session => {
-			
-			// create session 
-			if(session === null){
-				
-				rapidClient.collection("Game")
-				.document(sessionName)
-				.mutate({
-					"players": { clientPlayer: {"name":clientPlayer, "level":1, "points": 0, "ready": false}},
-					"started": false,
-					"completed": false,
-					"startCounter": 5
-				});
-			} 
-			
-			if(session.body.players.length <= MAX_PLAYERS){
-				SetSubscription(sessionName);
-			}else{
-				// return an error and/or window.alert();
-				window.alert("Session already full");
-			}
-			
-		});
+	.document(sessionName)
+	.fetch(session => {
+		var name = clientPlayer;
+		// create session 
+		if(session === null){
+							
+			rapidClient.collection("Game")
+			.document(sessionName)
+			.mutate({
+				"players": [{ "name":name, "level":1, "points": 0, "ready": false}],
+				"started": false,
+				"completed": false,
+				"startCounter": 5
+			})
+			.then(
+				function(){
+					SetSubscription(sessionName);
+				}
+			);
+
+		} else if(session.body.players.length <= MAX_PLAYERS){
+			SetSubscription(sessionName);
+		}else{
+			// return an error and/or window.alert();
+			window.alert("Session already full");
+			return;
+		}
+
+	});
 }
 //Returns the array of player objects and everything in them
 export function GetPlayers()
@@ -61,31 +65,38 @@ export function SetPlayerName(name)
 //we will eventually want to stray away from allowing access to the entire game...
 export function GetGameSession()
 {
+	debugger;
 	return GameSession;
 }
 
-export function GetPlayer(player)
-{
+export function GetPlayer(playerName)
+{		
+	// Get the player from the list
+	var returnPlayer = {}; 
+	var index = 0;
+	var players = GetPlayers();
+	for(index in players){
+		var player = players[index];
 
-	if(player.points != null)
-	{
-		return player;
-	}else
-	{
-		return GetPlayers()[player];
+		if(player.name === playerName){
+			returnPlayer = player;
+			break;
+		}
 	}
+	
+	return { "id": index, "player": returnPlayer};
 }
 
 //get scores for a specific player by name
 export function GetPoints(player)
 {
-	var p = GetPlayer(player);
+	var p = GetPlayer(player).player;
 	return p.points;
 }
 
 export function AddPoints(player, points)
 {
-	var p = GetPlayer(player);
+	var p = GetPlayer(player).player;
 	var name = p.name;
 	if(currentLev < 5){
 		currentLev += 1;
@@ -96,14 +107,14 @@ export function AddPoints(player, points)
   				doc.body.players[name].points += points;
   				return doc.body;
   			},success => {
-  				return GetPlayer(name);
+  				return GetPlayer(name).player;
   			});
 	}
 }
 
 export function SubtractPoints(player, points)
 {
-	var p = GetPlayer(player);
+	var p = GetPlayer(player).player;
 	var name = p.name;
 	rapidClient.collection('Game')
   	.document('Test')
@@ -114,13 +125,13 @@ export function SubtractPoints(player, points)
   			}
   			return doc.body;
   		},success => {
-  			return GetPlayer(name);
+  			return GetPlayer(name).player;
   		});
 }
 
 export function LevelUp(player)
 {
-	var p = GetPlayer(player);
+	var p = GetPlayer(player).player;
 	var name = p.name;
 	if(currentLev < 5){
 		currentLev += 1;
@@ -133,7 +144,7 @@ export function LevelUp(player)
   				return doc.body;
   			},success => {
   				UpdateWordFilterSubscription();
-  				return GetPlayer(name);
+  				return GetPlayer(name).player;
   			});
 	}
 
@@ -141,9 +152,9 @@ export function LevelUp(player)
 
 export function LevelDown(player)
 {
-	var p = GetPlayer(player);
+	var p = GetPlayer(player).player;
 	var name = p.name;
-	if(currentLev <= 5){
+	if(currentLev > 1){
 		currentLev -= 1;
 
 		rapidClient.collection('Game')
@@ -154,7 +165,7 @@ export function LevelDown(player)
   				return doc.body;
   			},success => {
   				UpdateWordFilterSubscription();
-  				return GetPlayer(name);
+  				return GetPlayer(name).player;
   			});
 	}
 
@@ -166,15 +177,19 @@ export function SetGameSession(session){
 	
 	GameSession = session;
 	currentLev = GetPlayer(clientPlayer).level;
+	// if(currentLev > 1){
+	// 	currentLev = 1;
+	// }
 	UpdateWordFilterSubscription();
+	debugger;
 }
 
 export function setWordSet(words){
 	currentWordSet = [];
 	for(var index=0; index<words.length; index++)
 	{
-		var wordDoc = words[index];
-		currentWordSet.push(wordDoc.body.word);
+		var word = words[index];
+		currentWordSet.push(word);
 	}
 }
 
@@ -184,11 +199,16 @@ export function UpdateWordFilterSubscription()
 		wordSubscription.unsubscribe();
 	}
 
-	wordSubscription = rapidClient.collection("List")
-		.filter({level: currentLev})
+	wordSubscription = rapidClient.collection("List3")
+		.document("level"+currentLev)
 		.subscribe(words => {
-			setWordSet(words)
+			setWordSet(words.body.words)
 		});
+}
+export function SetClientPlayer(name)
+{ 	clientPlayer = name;
+ 	var p = GetPlayer(clientPlayer).player;
+ 	UpdateWordFilterSubscription();
 }
 
 // Set and Update
@@ -197,22 +217,23 @@ export function SetSubscription(sessionName)
 	if(gameSubscription != null){
 		gameSubscription.unsubscribe();
 	}
-	debugger;
 	gameSubscription = rapidClient.collection("Game")
+		.document(sessionName)
 		.subscribe(game =>{
 			debugger;
 			SetGameSession(game.body);
 	});
 }
+
 export function GetWords()
 {
+	
 	return currentWordSet;
 }
 
 $(function(){
-	debugger;
 	window.JoinSession = JoinSession;
+	window.GetGameSession = GetGameSession;
 	//init();
 	//SetSubscription();
 });
-// }
