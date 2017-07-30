@@ -11,6 +11,8 @@ class App extends Component {
     super(props);
     this.state = {
       gameId: 1,
+      playerName: "John",
+      sessionName: "friends",
       gameStarted: false,
       activeWord: [],
       activeLetters: [],
@@ -31,9 +33,6 @@ class App extends Component {
     this.switchFonts = this.switchFonts.bind(this);
     this.interval;
   }
-
-
-
 
   componentWillMount(){
 
@@ -121,20 +120,28 @@ class App extends Component {
   }
 
   startGame(){
-      this.setState({
-        wordList: this.getWordList()
-      }, function(){
-        let word = this.getWord()
-        this.setState({
-          activeWord: this.getWord(),
-          gameStarted: true,
-          wordsMastered: 0,
-          timer: 60
-        });
-      });
-      ReactDOM.findDOMNode(this).querySelector('.secret-input').focus();
+    //$('#GameId').val();
+    //$('#')
 
-      this.interval = setInterval(this.timer, 1000);
+    rapid.init("Joe", "Testing", function(){
+      console.log("Game ready");
+    });
+  /*
+  this.setState({
+    wordList: this.getWordList()
+  }, function(){
+    let word = this.getWord()
+    this.setState({
+      activeWord: this.getWord(),
+      gameStarted: true,
+      wordsMastered: 0,
+      timer: 60
+    });
+  });
+  */
+  ReactDOM.findDOMNode(this).querySelector('.secret-input').focus();
+
+  this.interval = setInterval(this.timer, 1000);
   }
 
   getWord(){
@@ -173,6 +180,22 @@ class App extends Component {
 
   }
 
+  updatePlayerName(e){
+
+    this.setState({
+      playerName: e.target.value
+    });
+    debugger;
+  }
+
+  updateSessionName(e){
+
+    this.setState({
+      sessionName: e.target.value
+    });
+    debugger;
+  }
+
   render(){
 
     let letters = [];
@@ -194,6 +217,8 @@ class App extends Component {
       board=(
          <div className="game__board" key="start">
           <h1 className="main-header animated fadeInLeft" >{'DASH.LY'}</h1>
+          <input type="text" id="GameID" placeholder="Enter Game ID" value={this.state.playerName} onChange={this.updatePlayerName.bind(this)}/>
+          <input type="text" id="ClientID" placeholder="Enter Your Name" value={this.state.sessionName} onChange={this.updateSessionName.bind(this)}/>
           <div className="right">
             <button className="button" onClick={this.startGame}>Start</button>
           </div>

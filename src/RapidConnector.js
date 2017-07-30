@@ -15,7 +15,21 @@ var wordSubscription;
 /**
 Collections to suscribe to: Game, Words
 **/
-export function JoinSession(sessionName, callback){
+export function init(playerName, sessionName, callback){
+	
+	try{
+		SetClientPlayer(playerName);
+		JoinSession(sessionName);
+		UpdateWordFilterSubscription();
+	} catch(e){
+		callback(e.message);
+		return;
+	}
+	//callback('Session is full');
+	callback(null);
+}
+
+export function JoinSession(sessionName){
 	
 	// Call a fetch() to see if session exists or not
 	rapidClient.collection("Game")
@@ -45,12 +59,12 @@ export function JoinSession(sessionName, callback){
 		}else{
 			// return an error and/or window.alert();
 			window.alert("Session already full");
-			callback('Session is full');
+			
 			return;
 		}
 
 	});
-	callback(null);
+	
 }
 //Returns the array of player objects and everything in them
 export function GetPlayers()
@@ -207,13 +221,39 @@ export function UpdateWordFilterSubscription()
 }
 export function SetClientPlayer(name)
 { 	clientPlayer = name;
- 	var p = GetPlayer(clientPlayer).player;
- 	UpdateWordFilterSubscription();
+ 	//var p = GetPlayer(clientPlayer).player;
+ 	//UpdateWordFilterSubscription();
 }
 
+export function AddPlayerToGame(sessionName)
+{
+	//var index = GetPlayer(clientPlayer).id;
+	rapidClient.collection('Game')
+  		.document(sessionName)
+  			.execute(doc => {
+				if(doc.body.players.length < 4){
+					  doc.body.players.push({name: clientPlayer, level: 1, points: 0, ready: false});
+					  					  
+					  if(doc.body.players.length == 4)
+						{
+							doc.body.started = true;
+						}
+					  return doc.body;
+				}else{
+					window.alert("Game is Full");
+					return doc.body;
+				}
+  			},success => {
+  				UpdateWordFilterSubscription();
+  				return GetPlayer(clientPlayer).player;
+			  });
+
+}
 // Set and Update
 export function SetSubscription(sessionName)
 {
+	
+			
 	if(gameSubscription != null){
 		gameSubscription.unsubscribe();
 	}
