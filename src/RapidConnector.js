@@ -20,7 +20,7 @@ export function init(playerName, sessionName, callback){
 	try{
 		SetClientPlayer(playerName);
 		JoinSession(sessionName);
-		UpdateWordFilterSubscription();
+		
 	} catch(e){
 		callback(e.message);
 		return;
@@ -54,7 +54,6 @@ export function JoinSession(sessionName){
 			);
 
 		} else if(session.body.players.length <= MAX_PLAYERS){
-			debugger;
 			SetSubscription(sessionName);
 		}else{
 			// return an error and/or window.alert();
@@ -206,18 +205,22 @@ export function setWordSet(words){
 		var word = words[index];
 		currentWordSet.push(word);
 	}
+	debugger;
 }
 
-export function UpdateWordFilterSubscription()
+export function UpdateWordFilterSubscription(callback)
 {
 	if(wordSubscription != null){
 		wordSubscription.unsubscribe();
 	}
 	wordSubscription = rapidClient.collection("List3")
-		.document("level"+currentLev)
-		.subscribe(words => {
-			setWordSet(words.body.words)
-		});
+	.document("level"+currentLev)
+	.subscribe(words => {
+		setWordSet(words.body.words);
+		if(callback !== undefined)
+			callback();
+	});
+	//callback("Error subscribing to words");
 }
 export function SetClientPlayer(name)
 { 	clientPlayer = name;
@@ -266,7 +269,7 @@ export function SetSubscription(sessionName)
 
 export function GetWords()
 {
-	
+	debugger;
 	return currentWordSet;
 }
 

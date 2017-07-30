@@ -122,10 +122,24 @@ class App extends Component {
   startGame(){
     //$('#GameId').val();
     //$('#')
+    var self = this;
 
     rapid.init("Joe", "Testing", function(){
       console.log("Game ready");
-    });
+      rapid.UpdateWordFilterSubscription(function(){
+        var word = self.getWord();
+        self.setState({
+          activeWord: word,
+          gameStarted: true,
+          wordsMastered: 0,
+          timer: 60
+        });
+      });
+    });  
+
+    
+
+    
   /*
   this.setState({
     wordList: this.getWordList()
@@ -145,13 +159,23 @@ class App extends Component {
   }
 
   getWord(){
+    
+    /*
     let index = this.getRandomInt(0, this.state.wordList.length);
     let wordToUse = this.state.wordList[index];
     let newWordsList = this.state.wordList;
-    newWordsList.splice(index, 1);
+    */
+    debugger;
+    var newWordList = this.getWordList()
+    debugger;
+    var index = this.getRandomInt(0, newWordList.length)
+    var wordToUse = newWordList[index]
+    newWordList.splice(index, 1);
+
     this.setState({
-      wordList: newWordsList
+      wordList: newWordList
     })
+    debugger;
     return wordToUse.split("");
   }
 
