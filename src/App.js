@@ -353,18 +353,30 @@ Update(gameSession)
            <div className="col s8">
              <div className="progress-bar1">
                <div className="progress-fill1" style={{width: (0 + this.state.playerObjs[0].points)/10 + '%', backgroundColor: '#35e5Fd', transition:'width 2s'}}>
+               <h2 className="progress-bar-name">{this.state.playerObjs[0].points}</h2>
+             <br/>
+               <h2 className="progress-bar-name2">{this.state.playerObjs[0].name}</h2>
             </div>
            </div>
            <div className="progress-bar2">
                <div className="progress-fill2" style={{width: (0 + this.state.playerObjs[1].points)/10 + '%', backgroundColor: '#fd6fec', transition:'width 2s'}}>
+               <h2 className="progress-bar-name">{this.state.playerObjs[1].points}</h2>
+               <br/>
+               <h2 className="progress-bar-name2">{this.state.playerObjs[1].name}</h2>
             </div>
            </div>
            <div className="progress-bar3">
                <div className="progress-fill3" style={{width: (0 + this.state.playerObjs[2].points)/10 + '%', backgroundColor: '#32fec0', transition:'width 2s'}}>
+               <h2 className="progress-bar-name">{this.state.playerObjs[2].points}</h2>
+               <br/>
+               <h2 className="progress-bar-name2">{this.state.playerObjs[2].name}</h2>
             </div>
            </div>
            <div className="progress-bar4">
                <div className="progress-fill4" style={{width: (0 + this.state.playerObjs[3].points)/10 + '%', backgroundColor: '#fff83b', transition:'width 2s'}}>
+               <h2 className="progress-bar-name">{this.state.playerObjs[3].points}</h2>
+               <br/>
+               <h2 className="progress-bar-name2">{this.state.playerObjs[3].name}</h2>
             </div>
            </div>
          </div>
