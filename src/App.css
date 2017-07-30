@@ -1,9 +1,13 @@
+@font-face {
+  font-family: 'myFont';
+  src: url("font/DAGGERSQUARE_OBLIQUE.otf"); }
+
 * {
   box-sizing: border-box; }
 
 body {
   color: #FFF;
-  font-family: 'Raleway', sans-serif; }
+  font-family: 'myFont', sans-serif; }
 
 a {
   color: #DA3F62;
@@ -24,10 +28,21 @@ a {
     font-weight: 400; }
 
 .main-header {
-  font-size: 15em; }
+  font-size: 20em; }
 
 .main-background {
   background: white; }
+
+.progress-bar {
+  height: 6.3rem;
+  margin-top: 90vh;
+  margin-left: -20px;
+  width: 100%;
+  vertical-align: middle; }
+
+.progress-fill {
+  height: 100%;
+  text-align: left; }
 
 .game {
   margin: 0 auto;
@@ -51,8 +66,8 @@ a {
     text-align: center; }
   .game__timer {
     position: relative;
-    top: 40px;
-    font-size: 1rem;
+    top: 50vh;
+    font-size: 3rem;
     text-align: center; }
   .game__words {
     position: relative;
@@ -94,7 +109,8 @@ p {
   font-size: 2rem;
   padding: 40px 80px;
   display: block;
-  margin: 40px auto;
+  transform: skew(-23deg);
+  margin: 70px auto;
   transition: all 400ms ease-in-out; }
   .button:hover {
     border: 2px solid #DA3F62; }

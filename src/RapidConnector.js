@@ -16,15 +16,15 @@ var wordSubscription;
 Collections to suscribe to: Game, Words
 **/
 export function JoinSession(sessionName, callback){
-	
+
 	// Call a fetch() to see if session exists or not
 	rapidClient.collection("Game")
 	.document(sessionName)
 	.fetch(session => {
 		var name = clientPlayer;
-		// create session 
+		// create session
 		if(session === null){
-							
+
 			rapidClient.collection("Game")
 			.document(sessionName)
 			.mutate({
@@ -40,7 +40,6 @@ export function JoinSession(sessionName, callback){
 			);
 
 		} else if(session.body.players.length <= MAX_PLAYERS){
-			debugger;
 			SetSubscription(sessionName);
 		}else{
 			// return an error and/or window.alert();
@@ -72,9 +71,9 @@ export function GetGameSession()
 }
 
 export function GetPlayer(playerName)
-{		
+{
 	// Get the player from the list
-	var returnPlayer = {}; 
+	var returnPlayer = {};
 	var index = 0;
 	var players = GetPlayers();
 	for(index in players){
@@ -85,7 +84,7 @@ export function GetPlayer(playerName)
 			break;
 		}
 	}
-	
+
 	return { "id": index, "player": returnPlayer};
 }
 
@@ -176,7 +175,7 @@ export function LevelDown(player)
 export function SetGameSession(session){
 	// TODO: Check if max players already joined
 	// If max players, throw error to user
-	
+
 	GameSession = session;
 	currentLev = GetPlayer(clientPlayer).player.level;
 	// if(currentLev > 1){
@@ -226,7 +225,7 @@ export function SetSubscription(sessionName)
 
 export function GetWords()
 {
-	
+
 	return currentWordSet;
 }
 

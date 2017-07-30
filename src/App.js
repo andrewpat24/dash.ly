@@ -1,8 +1,10 @@
-import React, { Component } from 'react';
+import React, { PropTypes, Component } from 'react';
 import ReactDOM from 'react-dom';
 import ReactCSSTransitionGroup from 'standalone-react-css-transition-group';
 import * as rapid from './RapidConnector';
 import './App.css';
+import Chart from 'chart.js';
+import Form from "react-jsonschema-form";
 
 
 
@@ -19,6 +21,7 @@ class App extends Component {
       wordList: [],
       font: 'sans',
       currentLevel: 1,
+      percentComplete: 0
 
     }
     this.getWordList = this.getWordList.bind(this);
@@ -30,6 +33,9 @@ class App extends Component {
     this.rating = this.rating.bind(this);
     this.switchFonts = this.switchFonts.bind(this);
     this.interval;
+  }
+  static propTypes = {
+    percentComplete: PropTypes.number
   }
 
 
@@ -121,6 +127,11 @@ class App extends Component {
   }
 
   startGame(){
+
+      /*rapid.JoinSession("Joey", () => {
+        console.log("Successfully joined game");
+      });*/
+
       this.setState({
         wordList: this.getWordList()
       }, function(){
@@ -132,19 +143,21 @@ class App extends Component {
           timer: 60
         });
       });
+
       ReactDOM.findDOMNode(this).querySelector('.secret-input').focus();
 
       this.interval = setInterval(this.timer, 1000);
   }
 
   getWord(){
-    let index = this.getRandomInt(0, this.state.wordList.length);
-    let wordToUse = this.state.wordList[index];
-    let newWordsList = this.state.wordList;
+    let index = this.getRandomInt(0, this.getWordList().length);
+    let wordToUse = this.getWordList()[index];
+    let newWordsList = this.getWordList();
     newWordsList.splice(index, 1);
     this.setState({
       wordList: newWordsList
     })
+
     return wordToUse.split("");
   }
 
@@ -164,14 +177,15 @@ class App extends Component {
 
   }
   getWordList(){
-    var list = rapid.GetWords();
-    debugger;
-    var uppers = list.map(function(x) { debugger;return x.toUpperCase(); });
+    var list = ["Catt", "dogg", "tiger", "Lions", "poombah", "timone", "jumanji", "soccers", "specific", "chocolat"];
+;
+    var uppers = list.map(function(x) { return x.toUpperCase(); });
     console.log(uppers);
     return uppers;
 
 
   }
+
 
   render(){
 
@@ -194,6 +208,9 @@ class App extends Component {
       board=(
          <div className="game__board" key="start">
           <h1 className="main-header animated fadeInLeft" >{'DASH.LY'}</h1>
+          <div className="room-field-container">
+          
+          </div>
           <div className="right">
             <button className="button" onClick={this.startGame}>Start</button>
           </div>
@@ -208,10 +225,16 @@ class App extends Component {
                <ReactCSSTransitionGroup transitionName='fade' transitionEnterTimeout={500} transitionLeaveTimeout={500}>
                <div className="game__words" key={this.state.activeWord}>{letters}</div>
                </ReactCSSTransitionGroup>
-               <div className="game__timer">{'TIMELEFT: ' + this.state.timer}</div>
+               <div className="game__timer">{'TIME LEFT: ' + this.state.timer}</div>
              </div>
            </div>
+           <div className="col s8">
+             <div className="progress-bar">
+               <div className="progress-fill" style={{width: (0 + this.state.wordsMastered)*10 + '%', backgroundColor: '#35e5Fd', transition:'width 2s'}}>
+            </div>
            </div>
+         </div>
+       </div>
            );
     }
     else{
