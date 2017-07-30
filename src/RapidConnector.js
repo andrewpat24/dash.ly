@@ -15,12 +15,13 @@ var wordSubscription;
 /**
 Collections to suscribe to: Game, Words
 **/
+
 export function init(playerName, sessionName, callback){
-	
+
 	try{
 		SetClientPlayer(playerName);
 		JoinSession(sessionName);
-		
+
 	} catch(e){
 		callback(e.message);
 		return;
@@ -59,15 +60,15 @@ export function AddToPlayers(sessionName, player_name)
 }
 
 export function JoinSession(sessionName){
-	
-	// Call a fetch() to see if session exists or not
+
+		// Call a fetch() to see if session exists or not
 	rapidClient.collection("Game")
 	.document(sessionName)
 	.fetch(session => {
 		var name = clientPlayer;
-		// create session 
+		// create session
 		if(session === null){
-							
+
 			rapidClient.collection("Game")
 			.document(sessionName)
 			.mutate({
@@ -87,12 +88,12 @@ export function JoinSession(sessionName){
 		}else{
 			// return an error and/or window.alert();
 			window.alert("Session already full");
-			
+
 			return;
 		}
 
 	});
-	
+
 }
 //Returns the array of player objects and everything in them
 export function GetPlayers()
@@ -114,9 +115,9 @@ export function GetGameSession()
 }
 
 export function GetPlayer(playerName)
-{		
+{
 	// Get the player from the list
-	var returnPlayer = {}; 
+	var returnPlayer = {};
 	var index = 0;
 	var players = GetPlayers();
 	for(index in players){
@@ -127,7 +128,7 @@ export function GetPlayer(playerName)
 			break;
 		}
 	}
-	
+
 	return { "id": index, "player": returnPlayer};
 }
 
@@ -193,7 +194,7 @@ export function LevelUp(player)
   			});
 	}
 	debugger;
-	
+
 
 }
 
@@ -221,7 +222,7 @@ export function LevelDown(player)
 export function SetGameSession(session){
 	// TODO: Check if max players already joined
 	// If max players, throw error to user
-	
+
 	GameSession = session;
 	currentLev = GetPlayer(clientPlayer).player.level;
 	// if(currentLev > 1){
@@ -294,8 +295,8 @@ export function AddPlayerToGame(sessionName, clientPlayer)
 // Set and Update
 export function SetSubscription(sessionName)
 {
-	
-	var addPlayerCheck = gameSubscription == null;	
+
+	var addPlayerCheck = gameSubscription == null;
 
 	if(gameSubscription != null){
 		gameSubscription.unsubscribe();

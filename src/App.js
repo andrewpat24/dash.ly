@@ -1,8 +1,10 @@
-import React, { Component } from 'react';
+import React, { PropTypes, Component } from 'react';
 import ReactDOM from 'react-dom';
 import ReactCSSTransitionGroup from 'standalone-react-css-transition-group';
 import * as rapid from './RapidConnector';
 import './App.css';
+import Chart from 'chart.js';
+import Form from "react-jsonschema-form";
 
 
 
@@ -21,8 +23,9 @@ class App extends Component {
       wordList: [],
       font: 'sans',
       currentLevel: 1,
-      points: 0
-
+      points: 0,
+      percentComplete: 0,
+      api: rapid
     }
     this.getWordList = this.getWordList.bind(this);
     this.getRandomInt = this.getRandomInt.bind(this);
@@ -39,6 +42,9 @@ class App extends Component {
     this.GetPointAward = this.GetPointAward.bind(this);
     this.AwardPoints = this.AwardPoints.bind(this);
     this.interval;
+  }
+  static propTypes = {
+    percentComplete: PropTypes.number
   }
 
   AwardPoints(playerName, points){
@@ -166,31 +172,15 @@ class App extends Component {
           timer: 60
         });
       });
-    });  
 
-    
+      // ReactDOM.findDOMNode(this).querySelector('.secret-input').focus();
 
-    
-  /*
-  this.setState({
-    wordList: this.getWordList()
-  }, function(){
-    let word = this.getWord()
-    this.setState({
-      activeWord: this.getWord(),
-      gameStarted: true,
-      wordsMastered: 0,
-      timer: 60
     });
-  });
-  */
-  ReactDOM.findDOMNode(this).querySelector('.secret-input').focus();
 
-  this.interval = setInterval(this.timer, 1000);
-  }
+}
 
   getWord(){
-    
+
     /*
     let index = this.getRandomInt(0, this.state.wordList.length);
     let wordToUse = this.state.wordList[index];
@@ -204,6 +194,7 @@ class App extends Component {
     this.setState({
       wordList: newWordList
     })
+
     return wordToUse.split("");
   }
 
@@ -223,6 +214,7 @@ class App extends Component {
 
   }
   getWordList(){
+
     var list = rapid.GetWords();
     var uppers = list.map(function(x) {return x.toUpperCase(); });
     console.log(uppers);
@@ -244,7 +236,7 @@ class App extends Component {
       sessionName: e.target.value
     });
   }
-  
+
   startGameAsHarjit()
   {
     this.startGame("Harjit");
@@ -303,9 +295,6 @@ class App extends Component {
             <button className="button" onClick={this.startGameAsBhavesh}>Bhavesh</button>
             <button className="button" onClick={this.startGameAsAndrew}>Andrew</button>
 
-          <div className="right">
-            
-          </div>
          </div>);
     }
     else if(this.state.timer && this.state.gameStarted){
@@ -317,10 +306,16 @@ class App extends Component {
                <ReactCSSTransitionGroup transitionName='fade' transitionEnterTimeout={500} transitionLeaveTimeout={500}>
                <div className="game__words" key={this.state.activeWord}>{letters}</div>
                </ReactCSSTransitionGroup>
-               <div className="game__timer">{'TIMELEFT: ' + this.state.timer}</div>
+               <div className="game__timer">{'TIME LEFT: ' + this.state.timer}</div>
              </div>
            </div>
+           <div className="col s8">
+             <div className="progress-bar">
+               <div className="progress-fill" style={{width: (0 + this.state.wordsMastered)*10 + '%', backgroundColor: '#35e5Fd', transition:'width 2s'}}>
+            </div>
            </div>
+         </div>
+       </div>
            );
     }
     else{

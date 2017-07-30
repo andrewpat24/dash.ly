@@ -4,11 +4,15 @@
   "private": true,
   "dependencies": {
     "babel": "^6.23.0",
+    "chart.js": "^2.6.0",
     "jquery": "^3.2.1",
     "node-sass-chokidar": "0.0.3",
     "rapid-io": "^0.4.2",
     "react": "^15.6.1",
+    "react-chartjs": "^0.8.0",
     "react-dom": "^15.6.1",
+    "react-input": "^4.1.3",
+    "react-jsonschema-form": "^0.49.0",
     "react-scripts": "1.0.10",
     "standalone-react-css-transition-group": "^15.5.0"
   },
