@@ -182,8 +182,8 @@ class App extends Component {
       }
 
     rapid.init(
-      player, 
-      this.state.sessionName, 
+      player,
+      this.state.sessionName,
       function(){
         console.log("Game ready");
         rapid.UpdateWordFilterSubscription(function(){
@@ -197,7 +197,7 @@ class App extends Component {
         });
       },function(gameSession){
         self.Update(gameSession);
-        
+
       }
   );
 
