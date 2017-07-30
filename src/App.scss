@@ -1,0 +1,183 @@
+$bg: #FD6830;
+$color: #FFF;
+$red: #DA3F62;
+$wrong: #F3B61F;
+*{
+  box-sizing: border-box;
+}
+body{
+  color: $color;
+  font-family: 'Raleway', sans-serif;
+}
+
+a{
+  color: $red;
+  display: block;
+  margin: 0 auto;
+  text-decoration: none;
+  text-align: center;
+  transition: all 300ms ease-in-out;
+  font-size: 1rem;
+
+  &:hover{
+    color: lighten($red, 10%);
+  }
+}
+
+.serif{
+  font-family: 'Lora', serif;
+
+  .game-letter{
+    text-transform: lowercase;
+    letter-spacing: 1px;
+    font-weight: 400;
+  }
+}
+
+.main-header {
+  font-size: 15em;
+}
+.main-background{
+  background: white;
+}
+
+.game{
+  margin: 0 auto;
+  width: 102%;
+  height: 100vh;
+  margin-left: -12px;
+  position: absolute;
+
+  overflow: hidden;
+
+  &__board{
+    background: $bg;
+    margin-top: -30px;
+    height: 130vh;
+    position: relative;
+    top: 0;
+    right: 0;
+
+  }
+
+  &__score{
+    position: relative;
+    top: 40px;
+    left: 0;
+    font-size: 1rem;
+    text-align:center;
+  }
+
+  &__timer{
+    position: relative;
+    top: 40px;
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  &__words{
+    position: relative;
+    top: 180px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: #59646C;
+
+    p{
+      font-size: 1rem;
+    }
+  }
+}
+
+.emoji{
+  font-family: Arial, Helvetica, sans;
+  margin-left: 10px;
+  font-size: 2rem;
+  vertical-align: middle;
+}
+
+
+.game-letter{
+  letter-spacing: 2px;
+  font-size: 2rem;
+  font-weight: 700;
+  &[data-correct="true"]{
+    color: $red;
+  }
+  &[data-correct="false"]{
+    background: $wrong;
+  }
+
+  @media screen and (min-width: 768px){
+    font-size: 4rem;
+  }
+}
+
+p{
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+.button{
+  background: white;
+  border: 2px solid $color;
+  color: $bg;
+  text-transform: uppercase;
+  font-size: 2rem;
+  padding: 40px 80px;
+  display: block;
+  margin: 40px auto;
+  transition: all 400ms ease-in-out;
+
+  &:hover{
+    border: 2px solid $red;
+  }
+
+}
+
+.secret-input{
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  width: 0px;
+  height: 0px;
+  opacity: 0;
+}
+
+.fade-enter {
+  opacity: .01;
+}
+
+.fade-enter.fade-enter-active {
+  opacity: 1;
+  transition: all 500ms ease-in-out;
+}
+
+.fade-leave {
+  opacity: 1;
+}
+.fade-leave.fade-leave-active {
+  opacity: .01;
+  transform: translateY(100px);
+  transition: all 500ms ease-in-out;
+}
+
+.scale-enter {
+  opacity: .01;
+}
+
+.scale-enter.scale-enter-active {
+  opacity: 1;
+  transition: all 500ms ease-in-out;
+}
+
+.scale-leave {
+  opacity: 1;
+}
+
+.scale-leave.scale-leave-active {
+  opacity: .01;
+  transform: scale(3) rotate(20deg);
+  tranform-origin: bottom;
+  transition: all 500ms ease-in-out;
+}
